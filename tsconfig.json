@@ -1,0 +1,43 @@
+{
+  "include": ["src"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "dockerfile_builder",
+    "dockerfile_verification",
+    "yarn.lock",
+    ".dockerignore",
+    ".eslintignore",
+    ".eslintrc.js",
+    ".gitignore"
+  ],
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "lib": ["dom", "es2021"],
+    "importHelpers": true,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "pretty": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "types": [
+      "@testing-library/jest-dom",
+      "jest"
+    ]
+  }
+}

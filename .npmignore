@@ -1,0 +1,8 @@
+.dockerignore
+.eslintignore
+.eslintrc.js
+.gitignore
+.vscode
+node_modules
+dockerfile_verfication
+dockerfile_builder
