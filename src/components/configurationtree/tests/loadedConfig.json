@@ -1,50 +1,12 @@
 {
-  "Produce": {
-    "Fruits": {
-      "Apple": {
-        "DisplayName": "Apple Options",
-        "ParamType": "toggle",
-        "ValidValues": [],
-        "Value": "0",
-        "Description": "Toggle to include apples in the basket"
-      },
-      "Banana": {
-        "DisplayName": "Banana Options",
-        "ParamType": "toggle",
-        "ValidValues": [],
-        "Value": "0",
-        "Description": "Toggle to include bananas in the basket"
-      },
-      "Orange": {
-        "DisplayName": "Orange Options",
-        "ParamType": "toggle",
-        "ValidValues": [],
-        "Value": "0",
-        "Description": "Toggle to include oranges in the basket"
-      }
-    },
-    "Vegetables": {
-      "Carrot": {
-        "DisplayName": "Carrot Options",
-        "ParamType": "toggle",
-        "ValidValues": [],
-        "Value": "0",
-        "Description": "Toggle to include carrots in the basket"
-      },
-      "Broccoli": {
-        "DisplayName": "Broccoli Options",
-        "ParamType": "toggle",
-        "ValidValues": [],
-        "Value": "1",
-        "Description": "Toggle to include broccoli in the basket"
-      },
-      "Tomato": {
-        "DisplayName": "Tomato Options",
-        "ParamType": "toggle",
-        "ValidValues": [],
-        "Value": "0",
-        "Description": "Toggle to include tomatoes in the basket"
-      }
-    }
-  }
+  "Produce-Fruits-Apple": 0,
+  "Produce-Fruits-Banana": 0,
+  "Produce-Fruits-Orange": 0,
+
+  "Produce-Vegetables-Carrot": 0,
+  "Produce-Vegetables-Broccoli": 1,
+  "Produce-Vegetables-Tomato": 0,
+
+  "Meat-Beef": "rare",
+  "Meat-Chicken": 555
 }
