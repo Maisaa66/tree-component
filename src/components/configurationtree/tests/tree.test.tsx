@@ -31,7 +31,7 @@ test("expands the row when clicking on the icon", () => {
   render(<ExpandableTreeTable data={data} />);
 
   // Assuming the icon has a specific test ID
-  const icon = screen.getByTestId("PDSCH-PTRS-87-icon-container"); // Replace with the actual test ID
+  const icon = screen.getByTestId("Produce-13-icon-container"); // Replace with the actual test ID
 
   // Ensure that the icon is found
   expect(icon).toBeInTheDocument();
@@ -55,14 +55,20 @@ test("expands the row when clicking on the icon", () => {
 test("tooltip appears on hovering on the description", async () => {
   render(<ExpandableTreeTable data={data} showToolTip />);
 
-  const icon = screen.getByTestId("CORESET-138-icon-container");
+  const icon = screen.getByTestId("Produce-13-icon-container");
   expect(icon).toBeInTheDocument();
   fireEvent.click(icon);
 
-  const child = screen.getByText("Duration");
+  const child = screen.getByText("Fruits");
   expect(child).toBeInTheDocument();
+  const childIcon = screen.getByTestId("Fruits-14-icon-container");
+  fireEvent.click(childIcon);
 
-  const description = screen.getByText("Set the CORESET symbol duration");
+  const childNode = screen.getByText("Apple Options");
+  expect(childNode).toBeInTheDocument();
+
+
+  const description = screen.getByText("Toggle to include apples in the basket");
   // console.log(description);
   expect(description).toBeInTheDocument();
 
@@ -76,9 +82,9 @@ test("tooltip appears on hovering on the description", async () => {
 test("Actions Icons is appears on hovering", async () => {
   render(<ExpandableTreeTable data={data} showToolTip />);
 
-  const node = screen.getByText("PDSCH");
+  const node = screen.getByText("Produce");
   fireEvent.mouseEnter(node);
-  const actionsIcon = await screen.findByTestId("PDSCH-13-actions-container");
+  const actionsIcon = await screen.findByTestId("Produce-13-actions-container");
   expect(actionsIcon).toBeInTheDocument();
 });
 
@@ -97,7 +103,7 @@ describe("Test the Expand and Collapse Icons", () => {
     expect(expandIcon.length).toBeGreaterThan(0);
     
     // expand node to check collapse icon
-    const icon = screen.getByTestId("PDSCH-PTRS-87-icon-container");
+    const icon = screen.getByTestId("Produce-13-icon-container");
     fireEvent.click(icon);
     const collapseIcon = screen.getAllByTestId("FileCopyOutlinedIcon");
     expect(collapseIcon.length).toBe(1);
@@ -111,7 +117,7 @@ describe("Test the Expand and Collapse Icons", () => {
     expect(expandIcon.length).toBeGreaterThan(0);
 
     // expand node to check expand icon
-    const icon = screen.getByTestId("PDSCH-PTRS-87-icon-container");
+    const icon = screen.getByTestId("Produce-13-icon-container");
     fireEvent.click(icon);
     const expandableIcon = screen.getAllByTestId("arrowDownIcon");
     expect(expandableIcon.length).toBe(1);
@@ -124,7 +130,7 @@ describe("Test the Expand and Collapse Icons", () => {
     expect(expandIcon.length).toBeGreaterThan(0);
 
     // expand node to check collapse icon
-    const icon = screen.getByTestId("PDSCH-PTRS-87-icon-container");
+    const icon = screen.getByTestId("Produce-13-icon-container");
     console.log(icon);
     fireEvent.click(icon);
     const collapseIcon = screen.getAllByTestId("FileCopyOutlinedIcon");
@@ -136,12 +142,12 @@ test("showAndronment prop Testing", ()=>{
 
   render(<ExpandableTreeTable data={data} showAdornment/>);
 
-  const node = screen.getByTestId("Pattern-150-icon-container");
+  const node = screen.getByTestId("Meat-22-icon-container");
   expect(node).toBeInTheDocument();
 
   fireEvent.click(node);
 
-  const child = screen.getByText("Allocated Symbols");
+  const child = screen.getByText("Beef Options");
   expect(child).toBeInTheDocument();
 
   const andronments = screen.getAllByText(/(Preset)|(Custom)/i);
@@ -153,12 +159,12 @@ test("showAndronment prop Testing", ()=>{
 test("Delete Icon Testing", ()=>{
   render(<ExpandableTreeTable data={data} />);
 
-  const node = screen.getByText("PDSCH");
+  const node = screen.getByText("Produce");
   expect(node).toBeInTheDocument();
 
   fireEvent.mouseEnter(node);
 
-  const deleteIcon = screen.getByTestId("PDSCH-13-deleteIcon");
+  const deleteIcon = screen.getByTestId("Produce-13-deleteIcon");
   expect(deleteIcon).toBeInTheDocument();
 
   fireEvent.click(deleteIcon);
@@ -171,16 +177,16 @@ describe("Test the Actions Props",()=>{
     const handleAddMock = jest.fn();
     render(<ExpandableTreeTable data={data} actions={[{name:"add", icon:FileOpen, handler:handleAddMock}]} />);
     
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Produce");
     expect(node).toBeInTheDocument();
   
     fireEvent.mouseEnter(node);
   
-    const addIcon = screen.getByTestId("MuiActionIcon-PDSCH-13-add");
+    const addIcon = screen.getByTestId("MuiActionIcon-Produce-13-add");
     expect(addIcon).toBeInTheDocument();
-    const deleteIcon = screen.getByTestId("PDSCH-13-deleteIcon");
+    const deleteIcon = screen.getByTestId("Produce-13-deleteIcon");
     expect(deleteIcon).toBeInTheDocument();
-    const duplicateIcon = screen.getByTestId("PDSCH-13-duplicateIcon");
+    const duplicateIcon = screen.getByTestId("Produce-13-duplicateIcon");
     expect(duplicateIcon).toBeInTheDocument();
     
   
@@ -193,18 +199,18 @@ describe("Test the Actions Props",()=>{
 
     render(<ExpandableTreeTable data={data} actions={[{name:"duplicate", icon:FileOpen, handler:handleDuplicateMock}]}/>);
     
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Produce");
     expect(node).toBeInTheDocument();
   
     fireEvent.mouseEnter(node);
   
-    const addIcon = screen.getByTestId("PDSCH-13-addIcon");
+    const addIcon = screen.getByTestId("Produce-13-addIcon");
     expect(addIcon).toBeInTheDocument();
 
-    const deleteIcon = screen.getByTestId("PDSCH-13-deleteIcon");
+    const deleteIcon = screen.getByTestId("Produce-13-deleteIcon");
     expect(deleteIcon).toBeInTheDocument();
 
-    const duplicateIcon = screen.getByTestId("MuiActionIcon-PDSCH-13-duplicate");
+    const duplicateIcon = screen.getByTestId("MuiActionIcon-Produce-13-duplicate");
     expect(duplicateIcon).toBeInTheDocument();
     
     fireEvent.click(duplicateIcon);
@@ -217,18 +223,18 @@ describe("Test the Actions Props",()=>{
 
     render(<ExpandableTreeTable data={data} actions={[{name:"delete", icon:FileOpen, handler:handleDeleteMock}]}/>);
     
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Produce");
     expect(node).toBeInTheDocument();
   
     fireEvent.mouseEnter(node);
   
-    const addIcon = screen.getByTestId("PDSCH-13-addIcon");
+    const addIcon = screen.getByTestId("Produce-13-addIcon");
     expect(addIcon).toBeInTheDocument();
 
-    const deleteIcon = screen.getByTestId("MuiActionIcon-PDSCH-13-delete");
+    const deleteIcon = screen.getByTestId("MuiActionIcon-Produce-13-delete");
     expect(deleteIcon).toBeInTheDocument();
 
-    const duplicateIcon = screen.getByTestId("PDSCH-13-duplicateIcon");
+    const duplicateIcon = screen.getByTestId("Produce-13-duplicateIcon");
     expect(duplicateIcon).toBeInTheDocument();
     
     fireEvent.click(deleteIcon);
@@ -245,18 +251,18 @@ describe("Test the Actions Props",()=>{
 
     render(<ExpandableTreeTable data={data} actions={[{name:"add", icon:FileOpen, handler:handleAddMock}, {name:"duplicate", icon:FileCopyOutlined, handler:handleDuplicateMock}, {name:"delete", icon:TimeToLeave, handler:handleDeleteMock}]}/>);
     
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Produce");
     expect(node).toBeInTheDocument();
   
     fireEvent.mouseEnter(node);
   
-    const addIcon = screen.getByTestId("MuiActionIcon-PDSCH-13-add");
+    const addIcon = screen.getByTestId("MuiActionIcon-Produce-13-add");
     expect(addIcon).toBeInTheDocument();
 
-    const deleteIcon = screen.getByTestId("MuiActionIcon-PDSCH-13-delete");
+    const deleteIcon = screen.getByTestId("MuiActionIcon-Produce-13-delete");
     expect(deleteIcon).toBeInTheDocument();
 
-    const duplicateIcon = screen.getByTestId("MuiActionIcon-PDSCH-13-duplicate");
+    const duplicateIcon = screen.getByTestId("MuiActionIcon-Produce-13-duplicate");
     expect(duplicateIcon).toBeInTheDocument();
     
     fireEvent.click(addIcon);
@@ -277,18 +283,18 @@ describe("Test the Actions Props",()=>{
 
     render(<ExpandableTreeTable data={data} actions={[{name:"add", handler:handleAddMock}, {name:"duplicate", handler:handleDuplicateMock}, {name:"delete", handler:handleDeleteMock}]}/>);
     
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Produce");
     expect(node).toBeInTheDocument();
   
     fireEvent.mouseEnter(node);
   
-    const addIcon = screen.getByTestId("PDSCH-13-addIcon");
+    const addIcon = screen.getByTestId("Produce-13-addIcon");
     expect(addIcon).toBeInTheDocument();
 
-    const deleteIcon = screen.getByTestId("PDSCH-13-deleteIcon");
+    const deleteIcon = screen.getByTestId("Produce-13-deleteIcon");
     expect(deleteIcon).toBeInTheDocument();
 
-    const duplicateIcon = screen.getByTestId("PDSCH-13-duplicateIcon");
+    const duplicateIcon = screen.getByTestId("Produce-13-duplicateIcon");
     expect(duplicateIcon).toBeInTheDocument();
     
     fireEvent.click(addIcon);
@@ -306,30 +312,21 @@ describe("Test the loaded data", ()=>{
   test("Loaded data textField", ()=>{
     render(<ExpandableTreeTable data={data} loadedData={loadedData} />);
 
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Meat");
     expect(node).toBeInTheDocument();
 
-    const Icon = screen.getByTestId("PDSCH-13-icon-container");
+    const Icon = screen.getByTestId("Meat-22-icon-container");
 
     fireEvent.click(Icon);
 
-    const child = screen.getByText("1");
+    const child = screen.getByText("Beef Options");
     expect(child).toBeInTheDocument();
-
-
-    const childIcon = screen.getByTestId("1-14-icon-container");
-    expect(childIcon).toBeInTheDocument();
-
-    fireEvent.click(childIcon);
-
-    const childNode = screen.getByText("Power(db)");
-    expect(childNode).toBeInTheDocument();
 
     // const switchElement = screen.getByRole('checkbox', { checked: false });
     // expect(switchElement).toBeInTheDocument();
 
-    const childNodeValue = screen.getAllByDisplayValue("1.2");
-    expect(childNodeValue.length).toBeGreaterThan(0);
+    const childNodeValue = screen.getByDisplayValue("rare");
+    expect(childNodeValue).toBeInTheDocument();
 
 
   });
@@ -337,32 +334,30 @@ describe("Test the loaded data", ()=>{
   test("Loaded data switch",async ()=>{
     render(<ExpandableTreeTable data={data} loadedData={loadedData} />);
 
-    const node = screen.getByText("PDSCH");
+    const node = screen.getByText("Meat");
     expect(node).toBeInTheDocument();
 
-    const Icon = screen.getByTestId("PDSCH-13-icon-container");
+    const Icon = screen.getByTestId("Meat-22-icon-container");
 
     fireEvent.click(Icon);
 
-    const child = screen.getByText("1");
+    const child = screen.getByText("Beef Options");
     expect(child).toBeInTheDocument();
-  
-    const childIcon = screen.getByTestId("1-14-icon-container");
-    expect(childIcon).toBeInTheDocument();
 
-    fireEvent.click(childIcon);
+    // const switchElement = screen.getByRole('checkbox', { checked: false });
+    // expect(switchElement).toBeInTheDocument();
 
-    const childNode = screen.getByText("Transmission Scheme");
-    expect(childNode).toBeInTheDocument();
+    const childNodeValue = screen.getByDisplayValue("rare");
+    expect(childNodeValue).toBeInTheDocument();
 
     const combobox = screen.getAllByRole('button');
     expect(combobox.length).toBeGreaterThan(0);
 
-    expect(combobox[5].textContent).toBe("CodeBook");
+    expect(combobox[0].textContent).toBe("rare");
 
     
 
-    const targetComboBox = combobox[5];
+    const targetComboBox = combobox[0];
 
     // Open the ComboBox dropdown
     userEvent.click(targetComboBox);
@@ -380,12 +375,12 @@ describe("Test the loaded data", ()=>{
     });
   
     // Find and click the option with text "nonCodeBook"
-    const option = screen.getByText("nonCodebook");
+    const option = screen.getByText("welldone");
     userEvent.click(option);
   
     // Wait for the ComboBox to reflect the selected option
     await waitFor(() => {
-      expect(targetComboBox).toHaveTextContent("nonCodebook");
+      expect(targetComboBox).toHaveTextContent("welldone");
     });
   
   })
