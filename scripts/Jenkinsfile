@@ -1,102 +1,125 @@
 #!groovy
+
 import jenkins.*
 import jenkins.model.*
 import hudson.*
 import hudson.model.*
 
+DOCKER_IMAGE_NAME = 'tree_image'
+DOCKER_CONTAINER_NAME = 'tree'
 
-DOCKER_IMAGE_NAME='tree_image'
-DOCKER_CONTAINER_NAME='tree'
-
-checkTypesExecutionResultCode = -1 
+checkTypesExecutionResultCode = -1
 packageSecurityAuditResultCode = -1
-packageSecurityAuditNotAllowedBits = 248 
+packageSecurityAuditNotAllowedBits = 248
 linterResultCode = -1
 
-node {
-    stage('clean up') {
-        containerExistsResultCode = sh (
-            script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
-            returnStatus: true
-        )
-        // 'docker container inspect' return 0 if a container was found
-        if (0 == containerExistsResultCode) {
-            catchError {
-                sh "docker stop ${DOCKER_CONTAINER_NAME}"
-                sh "docker rm ${DOCKER_CONTAINER_NAME}"
+pipeline {
+    agent any
+
+    stages {
+        stage('Clean Up') {
+            steps {
+                script {
+                    containerExistsResultCode = sh (
+                        script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
+                        returnStatus: true
+                    )
+
+                    // 'docker container inspect' returns 0 if a container was found
+                    if (containerExistsResultCode == 0) {
+                        catchError {
+                            sh "docker stop ${DOCKER_CONTAINER_NAME}"
+                            sh "docker rm ${DOCKER_CONTAINER_NAME}"
+                        }
+                    }
+                }
             }
         }
-    }
-         stage("Clone") {
+
+        stage("Clone") {
             steps {
                 checkout scmGit(
                     branches: [[name: 'main']],
                     userRemoteConfigs: [[
                         url: 'https://github.com/Maisaa66/tree-component.git'
-                        ]],
+                    ]],
                 )
             }
-    stage("Prepare Docker Image") {
-        imageExistsResultCode = sh (
-            script: "docker image inspect ${DOCKER_IMAGE_NAME}",
-            returnStatus: true
-        )
-        echo "Docker image inspect resultcode: ${imageExistsResultCode}"
-        echo "Rebuild flag state: ${env.REBUILD_NODE_DOCKER_IMAGE}"
-
-        // 'docker image inspect' returns 0 if an image was found
-        if (0 != imageExistsResultCode || "true" == env.REBUILD_NODE_DOCKER_IMAGE ) {
-           
-                sh "docker build --tag ${DOCKER_IMAGE_NAME} --file ./dockerfile_verification ."
-            
         }
-    }
-    stage("Run Tests") {
-        
-            try {
-                // this command will create a file with the container id
-                sh "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
-                // this command will start the container with the id from the file
-                sh "docker start `cat ./xuicommon_gv_docker.pid`"
 
-                // this command will execute the command in the container and return the result code 
-                checkTypesExecutionResultCode = sh (
-                    script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run check-types\"",
-                    returnStatus: true
-                )
+        stage("Prepare Docker Image") {
+            steps {
+                script {
+                    imageExistsResultCode = sh (
+                        script: "docker image inspect ${DOCKER_IMAGE_NAME}",
+                        returnStatus: true
+                    )
 
-                packageSecurityAuditResultCode = sh (
-                    script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
-                    returnStatus: true
-                )
+                    echo "Docker image inspect result code: ${imageExistsResultCode}"
+                    echo "Rebuild flag state: ${REBUILD_NODE_DOCKER_IMAGE}"
 
-                linterResultCode = sh (
-                    script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run lint\"",
-                    returnStatus: true
-                )
+                    // 'docker image inspect' returns 0 if an image was found
+                    if (imageExistsResultCode != 0 || REBUILD_NODE_DOCKER_IMAGE == "true") {
+                        sh "docker build --tag ${DOCKER_IMAGE_NAME} --file ./dockerfile_verification ."
+                    }
+                }
             }
-            // this command will stop and remove the container
-            finally {
-                sh "docker stop `cat ./xuicommon_gv_docker.pid`"
-                sh "docker rm `cat ./xuicommon_gv_docker.pid`"
-                sh "rm ./xuicommon_gv_docker.pid"
+        }
 
+        stage("Run Tests") {
+            steps {
+                script {
+                    try {
+                        // this command will create a file with the container id
+                        sh "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+                        // this command will start the container with the id from the file
+                        sh "docker start `cat ./xuicommon_gv_docker.pid`"
+
+                        // this command will execute the command in the container and return the result code 
+                        checkTypesExecutionResultCode = sh (
+                            script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                            returnStatus: true
+                        )
+
+                        packageSecurityAuditResultCode = sh (
+                            script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                            returnStatus: true
+                        )
+
+                        linterResultCode = sh (
+                            script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run lint\"",
+                            returnStatus: true
+                        )
+                    }
+                    finally {
+                        // this command will stop and remove the container
+                        sh "docker stop `cat ./xuicommon_gv_docker.pid`"
+                        sh "docker rm `cat ./xuicommon_gv_docker.pid`"
+                        sh "rm ./xuicommon_gv_docker.pid"
+                    }
+                }
             }
-        
-    }
-    
-    stage('Finalize') {
-        if (0 != checkTypesExecutionResultCode) {
-            echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
-            currentBuild.result = 'FAILURE'
         }
-        if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
-            echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
-            currentBuild.result = 'FAILURE'
-        }
-        if (0 != linterResultCode) {
-            echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
-            currentBuild.result = 'UNSTABLE'
+
+        stage('Finalize') {
+            steps {
+                script {
+                    if (checkTypesExecutionResultCode != 0) {
+                        echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
+                        currentBuild.result = 'FAILURE'
+                    }
+
+                    if ((packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits) != 0) {
+                        echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
+                        currentBuild.result = 'FAILURE'
+                    }
+
+                    if (linterResultCode != 0) {
+                        echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
         }
     }
 }
