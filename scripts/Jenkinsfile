@@ -14,8 +14,6 @@ packageSecurityAuditNotAllowedBits = 248
 linterResultCode = -1
 
 pipeline {
-    agent any
-
     stages {
         stage('Clean Up') {
             steps {
