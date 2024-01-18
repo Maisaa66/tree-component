@@ -15,7 +15,7 @@ linterResultCode = -1
 
 node {
    
-    stages {
+
         stage('Clean Up') {
             steps {
                 script {
@@ -119,5 +119,5 @@ node {
                 }
             }
         }
-    }
+    
 }
