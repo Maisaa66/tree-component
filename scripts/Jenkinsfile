@@ -1,87 +1,16 @@
 #!groovy
 
-import jenkins.*
-import jenkins.model.*
-import hudson.*
-import hudson.model.*
-
-DOCKER_IMAGE_NAME = 'tree_image'
-DOCKER_CONTAINER_NAME = 'tree'
-
-checkTypesExecutionResultCode = -1
-packageSecurityAuditResultCode = -1
-packageSecurityAuditNotAllowedBits = 248
-linterResultCode = -1
-
-pipeline {
-   agent {dockerfile true}
-       options {
-        timeout(time: 1, unit: 'HOURS')
-    }
-
-    stages {
-        stage('Clean Up') {
-            steps {
-                script {
-                    containerExistsResultCode = sh (
-                        script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
-                        returnStatus: true
-                    )
-
-                    // 'docker container inspect' returns 0 if a container was found
-                    if (containerExistsResultCode == 0) {
-                        catchError {
-                            sh "docker stop ${DOCKER_CONTAINER_NAME}"
-                            sh "docker rm ${DOCKER_CONTAINER_NAME}"
-                        }
-                    }
-                }
-            }
-        }
-
-        stage("Clone") {
-            steps {
-                checkout scmGit(
-                    branches: [[name: 'main']],
-                    userRemoteConfigs: [[url: 'https://github.com/Maisaa66/tree-component.git']]
-
-                )
-            }
-        }
-
-        stage("Prepare Docker Image") {
-            steps {
-                script {
-                    imageExistsResultCode = sh (
-                        script: "docker image inspect ${DOCKER_IMAGE_NAME}",
-                        returnStatus: true
-                    )
-
-                    echo "Docker image inspect result code: ${imageExistsResultCode}"
-                    echo "Rebuild flag state: ${REBUILD_NODE_DOCKER_IMAGE}"
-
-                }
-            }
-        }
-
-        stage("Test") {
-            steps {
-                sh 'npm test'
-               echo "test stage"
-            }
-        }
-
-
-        stage("Lint") {
-            steps {
-               echo "lint stage"
-            }
+node {
+    stage('Example') {
+        if (env.BRANCH_NAME == 'master') {
+            echo 'I only execute on the master branch'
+        } else {
+            echo 'I execute elsewhere'
         }
     }
-    post {
-        success {
-                echo "everything is good"
-        }
-    }
-
-    }
+   post{
+      success{
+         echo "DONE"
+      }
+   }
+}
