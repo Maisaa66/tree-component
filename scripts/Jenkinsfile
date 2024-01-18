@@ -13,9 +13,13 @@ packageSecurityAuditResultCode = -1
 packageSecurityAuditNotAllowedBits = 248
 linterResultCode = -1
 
-node {
-   
+pipeline {
+   agent any
+       options {
+        timeout(time: 1, unit: 'HOURS')
+    }
 
+    stages {
         stage('Clean Up') {
             steps {
                 script {
@@ -119,5 +123,5 @@ node {
                 }
             }
         }
-    
+    }
 }
