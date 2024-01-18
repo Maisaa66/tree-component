@@ -1,8 +1,4 @@
-/** *********************************************************
- * This software and related documentation are proprietary
- * and confidential to Siemens.
- * Copyright 2023 Siemens.
- ********************************************************** */
+
 
 import { createTheme, Theme, ThemeOptions } from '@mui/material/styles';
 const colors = { 
