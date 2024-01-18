@@ -5,9 +5,9 @@ node {
         try {
             sh 'exit 1'
         }
-        catch (exc) {
+        catch (err) {
             echo 'Something failed, I should sound the klaxons!'
-            throw
+            throw err
         }
     }
 }
