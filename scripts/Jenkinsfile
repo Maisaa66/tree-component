@@ -13,7 +13,8 @@ packageSecurityAuditResultCode = -1
 packageSecurityAuditNotAllowedBits = 248
 linterResultCode = -1
 
-pipeline {
+node {
+   
     stages {
         stage('Clean Up') {
             steps {
