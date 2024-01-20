@@ -15,7 +15,7 @@ node {
     // } else {
     //     echo 'I execute elsewhere'
     // }
-
+    def contID
     stage('clean up') {
         containerExistsResultCode = bat (
             script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
@@ -71,52 +71,56 @@ node {
         }
     }
 
-    stage("Run Tests") {
-        def contID = bat(script: "type .\\xuicommon_gv_docker.pid", returnStdout: true).trim()
-        echo "container id id is  ${contID}  "
+       stage("Run Tests") {
+            
+
+            try {
+                // this command will create a file with the container id
+                bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+
+                contID = bat(script: 'type "./xuicommon_gv_docker.pid"', returnStdout: true).trim()
+                // this command will start the container with the id from the file
+                bat "docker start ${contID}"
+
+                // this command will execute the command in the container and return the result code 
+                checkTypesExecutionResultCode = bat (
+                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                    returnStatus: true
+                )
+
+                packageSecurityAuditResultCode = bat (
+                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                    returnStatus: true
+                )
+
+                linterResultCode = bat (
+                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run lint\"",
+                    returnStatus: true
+                )
+            }
+            // this command will stop and remove the container
+            finally {
+                sh "docker stop ${contID}"
+                sh "docker rm ${contID}"
+                sh "del .\\xuicommon_gv_docker.pid"
+
+            }
         
-        bat "del .\\xuicommon_gv_docker.pid"
-
-        // bat "docker rm ${contID}"
-        // bat "rm ./xuicommon_gv_docker.pid"
-        //             def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
-
-        // try {
-        //     // this command will create a file with the container id
-        //     echo "DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}"
-            
-        //     bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
-            
-        //     // this command will start the container with the id from the file
-        //      // this command will start the container with the id from the file
-        //         // bat "docker start `cat ./xuicommon_gv_docker.pid`"
-
-        //         // // this command will execute the command in the container and return the result code 
-        //         // checkTypesExecutionResultCode = sh (
-        //         //     script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run check-types\"",
-        //         //     returnStatus: true
-        //         // )
-
-        //         // packageSecurityAuditResultCode = sh (
-        //         //     script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
-        //         //     returnStatus: true
-        //         // )
-
-        //         // linterResultCode = sh (
-        //         //     script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run lint\"",
-        //         //     returnStatus: true
-        //         // )
-
-        //     echo "${contID}"
-            
-        // }
-        //     finally {
-
-        //         echo "HELLO"
-        //         echo "${contID}"
-        //                     echo "DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}"
-
-        //     }
+    }
+    
+    stage('Finalize') {
+        if (0 != checkTypesExecutionResultCode) {
+            echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
+            currentBuild.result = 'FAILURE'
+        }
+        if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
+            echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
+            currentBuild.result = 'FAILURE'
+        }
+        if (0 != linterResultCode) {
+            echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
+            currentBuild.result = 'UNSTABLE'
+        }
     }
 }
 
