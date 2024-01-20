@@ -57,7 +57,7 @@ node {
         ])
         }
 
-        stage("Prepare Docker Image") {
+stage("Prepare Docker Image") {
         imageExistsResultCode = bat (
             script: "docker image inspect ${DOCKER_IMAGE_NAME}",
             returnStatus: true
@@ -74,7 +74,7 @@ node {
         }
     }
 
-        stage("Run Tests") {
+stage("Run Tests") {
         
             try {
                 // this command will create a file with the container id
@@ -83,48 +83,9 @@ node {
 
                 def containerId = bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
                 echo "containerID is ${containerId}"
-            //     bat "docker start ${containerId}"
 
-
-            //     // this command will execute the command in the container and return the result code 
-            //     checkTypesExecutionResultCode = bat (
-            //         script: "docker exec ${containerId} /bin/bash -c \"cd /xui/common && npm run check-types\"",
-            //         returnStatus: true
-            //     )
-
-            //     packageSecurityAuditResultCode = bat (
-            //         script: "docker exec ${containerId} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
-            //         returnStatus: true
-            //     )
-
-            //     linterResultCode = sh (
-            //         script: "docker exec ${containerId} /bin/bash -c \"cd /xui/common && npm run lint\"",
-            //         returnStatus: true
-            //     )
-            // }
-            // // this command will stop and remove the container
-            // finally {
-            //     bat "docker stop ${containerId}"
-            //     bat "docker rm ${containerId}"
-            //     bat "rm ./xuicommon_gv_docker.pid"
-
-            // }
         
-    }
+    }}
     
-    // stage('Finalize') {
-    //     if (0 != checkTypesExecutionResultCode) {
-    //         echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
-    //         currentBuild.result = 'FAILURE'
-    //     }
-    //     if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
-    //         echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
-    //         currentBuild.result = 'FAILURE'
-    //     }
-    //     if (0 != linterResultCode) {
-    //         echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
-    //         currentBuild.result = 'UNSTABLE'
-    //     }
-    // }
-    
+
 }
