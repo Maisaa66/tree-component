@@ -33,6 +33,9 @@ node {
                 bat "docker stop ${DOCKER_CONTAINER_NAME}"
                 bat "docker rm ${DOCKER_CONTAINER_NAME}"
             }
+        } else{
+
+            echo "no such container"
         }
     }
 
