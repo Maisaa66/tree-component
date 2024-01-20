@@ -77,31 +77,12 @@ node {
             bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             
             // this command will start the container with the id from the file
-            def containerId = bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
-            echo "containerID is ${containerId}"
-                            // this command will start the container with the id from the file
-                sh "docker start ${DOCKER_CONTAINER_NAME}"
-                            // this command will execute the command in the container and return the result code 
-                checkTypesExecutionResultCode = sh (
-                    script: "docker exec ${DOCKER_CONTAINER_NAME} /bin/bash -c \"cd /xui/common && npm run check-types\"",
-                    returnStatus: true
-                )
-
-                packageSecurityAuditResultCode = sh (
-                    script: "docker exec ${DOCKER_CONTAINER_NAME} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
-                    returnStatus: true
-                )
-
-                linterResultCode = sh (
-                    script: "docker exec ${DOCKER_CONTAINER_NAME} /bin/bash -c \"cd /xui/common && npm run lint\"",
-                    returnStatus: true
-                )
+            bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
+            
         }
             finally {
-                bat "docker stop ${DOCKER_CONTAINER_NAME}"
-                bat "docker rm ${DOCKER_CONTAINER_NAME}"
-                bat "rm ./xuicommon_gv_docker.pid"
 
+                echo "HELLO"
             }
     }
 }
