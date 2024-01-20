@@ -19,7 +19,7 @@ COPY .eslintignore .eslintignore
 COPY .eslintrc.js .eslintrc.js
 COPY tsconfig.json tsconfig.json
 
-RUN npm install --verbose
+RUN npm install --legacy-peer-deps
 
 
 COPY src src
