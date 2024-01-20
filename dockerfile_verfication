@@ -18,9 +18,9 @@ COPY package.json package.json
 COPY .eslintignore .eslintignore
 COPY .eslintrc.js .eslintrc.js
 COPY tsconfig.json tsconfig.json
+copy webpack.config.js webpack.config.js
 
 RUN npm install --legacy-peer-deps
-
 
 COPY src src
 
