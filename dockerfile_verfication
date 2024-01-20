@@ -24,7 +24,6 @@ COPY tsconfig.json tsconfig.json
 RUN npm install --ignore-scripts --network-timeout 100000
 
 # Copy the sources and assets which change often to image.
-COPY assets assets
 COPY src src
 
 RUN npm postinstall
