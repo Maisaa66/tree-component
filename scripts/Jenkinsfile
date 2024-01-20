@@ -2,10 +2,18 @@
 
 node {
     stage('Example') {
-        if (env.BRANCH_NAME == 'master') {
-            echo 'I only execute on the master branch'
-        } else {
-            echo 'I execute elsewhere'
+        // if (env.BRANCH_NAME == 'master') {
+        //     echo 'I only execute on the master branch'
+        // } else {
+        //     echo 'I execute elsewhere'
+        // }
+        stages{
+            stage("try1"){
+                echo"Hello stage1"
+            }
+            stage("try2"){
+                echo"Hello stage2"
+            }
         }
     }
 }
