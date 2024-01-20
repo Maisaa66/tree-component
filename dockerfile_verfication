@@ -22,7 +22,6 @@ COPY tsconfig.json tsconfig.json
 
 RUN npm install
 
-COPY assets assets
 COPY src src
 
 RUN npm run postinstall
