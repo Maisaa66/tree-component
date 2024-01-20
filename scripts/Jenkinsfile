@@ -100,9 +100,9 @@ node {
             }
             // this command will stop and remove the container
             finally {
-                sh "docker stop ${contID}"
-                sh "docker rm ${contID}"
-                sh "del .\\xuicommon_gv_docker.pid"
+                bat "docker stop ${contID}"
+                bat "docker rm ${contID}"
+                bat "del .\\xuicommon_gv_docker.pid"
 
             }
         
