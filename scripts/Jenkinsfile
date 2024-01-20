@@ -74,7 +74,7 @@ node {
     stage("Run Tests") {
         try {
             // this command will create a file with the container id
-            bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+            // bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             
             // this command will start the container with the id from the file
             bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
