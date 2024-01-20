@@ -15,7 +15,6 @@ node {
     // } else {
     //     echo 'I execute elsewhere'
     // }
-    def contID
     stage('clean up') {
         containerExistsResultCode = bat (
             script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
@@ -71,41 +70,49 @@ node {
         }
     }
 
-       stage("Run Tests") {
-            
+      def contID
+stage("Run Tests") {
+    try {
+        // this command will create a file with the container id
+        bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+        // Read the content of the PID file
+        contID = readFile('./xuicommon_gv_docker.pid').trim()
 
-            try {
-                // this command will create a file with the container id
-                bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
-                contID = bat(script: "cat ./xuicommon_gv_docker.pid", returnStdout:true)
-                // this command will start the container with the id from the file
-                bat "docker start ${contID}"
+        if (contID) {
+            // this command will start the container with the id from the file
+            bat "docker start ${contID}"
 
-                // this command will execute the command in the container and return the result code 
-                checkTypesExecutionResultCode = bat (
-                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run check-types\"",
-                    returnStatus: true
-                )
+            // this command will execute the command in the container and return the result code 
+            checkTypesExecutionResultCode = bat (
+                script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                returnStatus: true
+            )
 
-                packageSecurityAuditResultCode = bat (
-                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
-                    returnStatus: true
-                )
+            packageSecurityAuditResultCode = bat (
+                script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                returnStatus: true
+            )
 
-                linterResultCode = bat (
-                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run lint\"",
-                    returnStatus: true
-                )
-            }
-            // this command will stop and remove the container
-            finally {
-                bat "docker stop ${contID}"
-                bat "docker rm ${contID}"
-                bat "del .\\xuicommon_gv_docker.pid"
-
-            }
-        
+            linterResultCode = bat (
+                script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run lint\"",
+                returnStatus: true
+            )
+        } else {
+            echo "Error: Container ID is empty."
+        }
     }
+    // this command will stop and remove the container
+    finally {
+        if (contID) {
+            bat "docker stop ${contID}"
+            bat "docker rm ${contID}"
+        } else {
+            echo "Error: Container ID is empty."
+        }
+        bat "del .\\xuicommon_gv_docker.pid"
+    }
+}
+
     
     stage('Finalize') {
         if (0 != checkTypesExecutionResultCode) {
