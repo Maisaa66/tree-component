@@ -72,12 +72,15 @@ node {
     }
 
     stage("Run Tests") {
+                    def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
+
         try {
             // this command will create a file with the container id
+            echo "DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}"
+            
             bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             
             // this command will start the container with the id from the file
-            def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
              // this command will start the container with the id from the file
                 // bat "docker start `cat ./xuicommon_gv_docker.pid`"
 
@@ -103,6 +106,9 @@ node {
             finally {
 
                 echo "HELLO"
+                echo "${contID}"
+                            echo "DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}"
+
             }
     }
 }
