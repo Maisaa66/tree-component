@@ -73,5 +73,54 @@ node {
             
         }
     }
+
+        stage("Run Tests") {
+        dir("${GERRIT_PROJECT}") {
+            try {
+                // this command will create a file with the container id
+                sh "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+                // this command will start the container with the id from the file
+                sh "docker start `cat ./xuicommon_gv_docker.pid`"
+
+                // this command will execute the command in the container and return the result code 
+                checkTypesExecutionResultCode = sh (
+                    script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                    returnStatus: true
+                )
+
+                packageSecurityAuditResultCode = sh (
+                    script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                    returnStatus: true
+                )
+
+                linterResultCode = sh (
+                    script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run lint\"",
+                    returnStatus: true
+                )
+            }
+            // this command will stop and remove the container
+            finally {
+                sh "docker stop `cat ./xuicommon_gv_docker.pid`"
+                sh "docker rm `cat ./xuicommon_gv_docker.pid`"
+                sh "rm ./xuicommon_gv_docker.pid"
+
+            }
+        }
+    }
+    
+    stage('Finalize') {
+        if (0 != checkTypesExecutionResultCode) {
+            echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
+            currentBuild.result = 'FAILURE'
+        }
+        if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
+            echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
+            currentBuild.result = 'FAILURE'
+        }
+        if (0 != linterResultCode) {
+            echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
+            currentBuild.result = 'UNSTABLE'
+        }
+    }
     
 }
