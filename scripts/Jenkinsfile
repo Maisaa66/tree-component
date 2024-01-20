@@ -74,10 +74,30 @@ node {
     stage("Run Tests") {
         try {
             // this command will create a file with the container id
-            // bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+            bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             
             // this command will start the container with the id from the file
-            bat "type .\\xuicommon_gv_docker.pid"
+            def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
+             // this command will start the container with the id from the file
+                // bat "docker start `cat ./xuicommon_gv_docker.pid`"
+
+                // // this command will execute the command in the container and return the result code 
+                // checkTypesExecutionResultCode = sh (
+                //     script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                //     returnStatus: true
+                // )
+
+                // packageSecurityAuditResultCode = sh (
+                //     script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                //     returnStatus: true
+                // )
+
+                // linterResultCode = sh (
+                //     script: "docker exec `cat ./xuicommon_gv_docker.pid` /bin/bash -c \"cd /xui/common && npm run lint\"",
+                //     returnStatus: true
+                // )
+
+            echo "${contID}"
             
         }
             finally {
