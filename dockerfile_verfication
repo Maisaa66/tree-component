@@ -19,7 +19,8 @@ COPY .eslintignore .eslintignore
 COPY .eslintrc.js .eslintrc.js
 COPY tsconfig.json tsconfig.json
 
-RUN npm install
+RUN npm install --verbose
+
 
 COPY src src
 
