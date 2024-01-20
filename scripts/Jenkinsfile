@@ -73,9 +73,11 @@ node {
 
     stage("Run Tests") {
         def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
-        bat "docker stop ${contID}"
-        bat "docker rm ${contID}"
-        bat "rm ./xuicommon_gv_docker.pid"
+        bat "${contID}"
+        echo "container id id ${contID}"
+        // bat "docker stop ${contID}"
+        // bat "docker rm ${contID}"
+        // bat "rm ./xuicommon_gv_docker.pid"
         //             def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
 
         // try {
