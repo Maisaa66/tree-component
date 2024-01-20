@@ -79,28 +79,28 @@ node {
                 bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
 
                 // this command will start the container with the id from the file
-                bat "docker start cat ./xuicommon_gv_docker.pid"
+                bat "docker start $(<./xuicommon_gv_docker.pid)"
 
                 // this command will execute the command in the container and return the result code 
                 checkTypesExecutionResultCode = bat (
-                    script: "docker exec cat ./xuicommon_gv_docker.pid /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                    script: "docker exec $(<./xuicommon_gv_docker.pid) /bin/bash -c \"cd /xui/common && npm run check-types\"",
                     returnStatus: true
                 )
 
                 packageSecurityAuditResultCode = bat (
-                    script: "docker exec cat ./xuicommon_gv_docker.pid /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                    script: "docker exec $(<./xuicommon_gv_docker.pid) /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
                     returnStatus: true
                 )
 
                 linterResultCode = bat (
-                    script: "docker exec cat ./xuicommon_gv_docker.pid /bin/bash -c \"cd /xui/common && npm run lint\"",
+                    script: "docker exec $(<./xuicommon_gv_docker.pid) /bin/bash -c \"cd /xui/common && npm run lint\"",
                     returnStatus: true
                 )
             }
             // this command will stop and remove the container
             finally {
-                bat "docker stop cat ./xuicommon_gv_docker.pid"
-                bat "docker rm cat ./xuicommon_gv_docker.pid"
+                bat "docker stop $(<./xuicommon_gv_docker.pid)"
+                bat "docker rm $(<./xuicommon_gv_docker.pid)"
                 bat "del .\\xuicommon_gv_docker.pid"
 
             }
