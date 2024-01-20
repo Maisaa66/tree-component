@@ -9,7 +9,7 @@ RUN tar -xf node-v18.12.1-linux-x64.tar.xz --directory=/usr/local --strip-compon
 RUN rm node-v18.12.1-linux-x64.tar.xz
 
 RUN apk add npm
-RUN npm install -g npm
+RUN NODE_ENV=development npm i
 
 SHELL [ "/bin/bash", "-c" ]
 
