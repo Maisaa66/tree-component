@@ -15,7 +15,6 @@ SHELL [ "/bin/bash", "-c" ]
 WORKDIR /xui/common
 
 COPY package.json package.json
-COPY yarn.lock yarn.lock
 COPY .eslintignore .eslintignore
 COPY .eslintrc.js .eslintrc.js
 COPY tsconfig.json tsconfig.json
