@@ -77,30 +77,30 @@ node {
             try {
                 // this command will create a file with the container id
                 bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
-
+                contID = bat(script: "cat ./xuicommon_gv_docker.pid", returnStdout:true)
                 // this command will start the container with the id from the file
-                bat "docker start ${(<./xuicommon_gv_docker.pid)}"
+                bat "docker start ${contID}"
 
                 // this command will execute the command in the container and return the result code 
                 checkTypesExecutionResultCode = bat (
-                    script: "docker exec ${(<./xuicommon_gv_docker.pid)} /bin/bash -c \"cd /xui/common && npm run check-types\"",
+                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run check-types\"",
                     returnStatus: true
                 )
 
                 packageSecurityAuditResultCode = bat (
-                    script: "docker exec ${(<./xuicommon_gv_docker.pid)} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
+                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
                     returnStatus: true
                 )
 
                 linterResultCode = bat (
-                    script: "docker exec ${(<./xuicommon_gv_docker.pid)} /bin/bash -c \"cd /xui/common && npm run lint\"",
+                    script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run lint\"",
                     returnStatus: true
                 )
             }
             // this command will stop and remove the container
             finally {
-                bat "docker stop ${(<./xuicommon_gv_docker.pid)}"
-                bat "docker rm ${(<./xuicommon_gv_docker.pid)}"
+                bat "docker stop ${contID}"
+                bat "docker rm ${contID}"
                 bat "del .\\xuicommon_gv_docker.pid"
 
             }
