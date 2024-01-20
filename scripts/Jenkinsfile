@@ -10,21 +10,20 @@ packageSecurityAuditNotAllowedBits = 248
 linterResultCode = -1
 
 node {
-    
-        // if (env.BRANCH_NAME == 'master') {
-        //     echo 'I only execute on the master branch'
-        // } else {
-        //     echo 'I execute elsewhere'
-        // }
-        
-    
-        stage('clean up') {
+    // if (env.BRANCH_NAME == 'master') {
+    //     echo 'I only execute on the master branch'
+    // } else {
+    //     echo 'I execute elsewhere'
+    // }
+
+    stage('clean up') {
         containerExistsResultCode = bat (
             script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
             returnStatus: true
         )
-        // 'docker container inspect' return 0 if a container was found
-        if (0 == containerExistsResultCode) {
+        
+        // 'docker container inspect' returns 0 if a container was found
+        if (containerExistsResultCode == 0) {
             catchError {
                 bat "docker stop ${DOCKER_CONTAINER_NAME}"
                 bat "docker rm ${DOCKER_CONTAINER_NAME}"
@@ -32,8 +31,8 @@ node {
         }
     }
 
-      stage("Clone") {
-            checkout([$class: 'GitSCM',
+    stage("Clone") {
+        checkout([$class: 'GitSCM',
             branches: [[name: "main"]],
             doGenerateSubmoduleConfigurations: false,
             extensions: [ [
@@ -55,37 +54,32 @@ node {
                 ]
             ]
         ])
-        }
+    }
 
-stage("Prepare Docker Image") {
+    stage("Prepare Docker Image") {
         imageExistsResultCode = bat (
             script: "docker image inspect ${DOCKER_IMAGE_NAME}",
             returnStatus: true
         )
+        
         echo "Docker image inspect resultcode: ${imageExistsResultCode}"
         echo "Rebuild flag state: ${env.REBUILD_NODE_DOCKER_IMAGE}"
 
         // 'docker image inspect' returns 0 if an image was found
-        if (0 != imageExistsResultCode || "true" == env.REBUILD_NODE_DOCKER_IMAGE ) {
-            
-                bat "docker build --tag ${DOCKER_IMAGE_NAME} --file ./dockerfile_verfication ."
-            
-            
+        if (imageExistsResultCode != 0 || "true" == env.REBUILD_NODE_DOCKER_IMAGE) {
+            bat "docker build --tag ${DOCKER_IMAGE_NAME} --file ./dockerfile_verfication ."
         }
     }
 
-stage("Run Tests") {
-        
-            try {
-                // this command will create a file with the container id
-                bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
-                // this command will start the container with the id from the file
-
-                def containerId = bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
-                echo "containerID is ${containerId}"
-
-        
-    }}
-    
-
+    stage("Run Tests") {
+        try {
+            // this command will create a file with the container id
+            bat "docker create --cidfile ./xuicommon_gv_docker.pid --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+            
+            // this command will start the container with the id from the file
+            def containerId = bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
+            echo "containerID is ${containerId}"
+        }
+    }
 }
+
