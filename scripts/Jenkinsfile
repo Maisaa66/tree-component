@@ -1,5 +1,14 @@
 #!groovy
 
+DOCKER_IMAGE_NAME='xui_common_gv_image'
+DOCKER_CONTAINER_NAME='xui_common_gv'
+JUNIT_TEST_REPORT_FILE_NAME='junit_common_testreport.xml'
+
+checkTypesExecutionResultCode = -1 
+packageSecurityAuditResultCode = -1
+packageSecurityAuditNotAllowedBits = 248 
+linterResultCode = -1
+
 node {
     
         // if (env.BRANCH_NAME == 'master') {
@@ -11,9 +20,24 @@ node {
             stage("try1"){
                 echo"Hello stage1"
             }
-            stage("try2"){
+
+    
+        stage('clean up') {
+        containerExistsResultCode = sh (
+            script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
+            returnStatus: true
+        )
+        // 'docker container inspect' return 0 if a container was found
+        if (0 == containerExistsResultCode) {
+            catchError {
+                sh "docker stop ${DOCKER_CONTAINER_NAME}"
+                sh "docker rm ${DOCKER_CONTAINER_NAME}"
+            }
+        }
+    }
+
+                stage("try2"){
                 echo"Hello stage2"
             }
-        
     
 }
