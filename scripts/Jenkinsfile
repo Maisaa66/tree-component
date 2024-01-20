@@ -33,14 +33,28 @@ node {
     }
 
       stage("Clone") {
-            steps {
-                checkout scmGit(
-                    branches: [[name: 'main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/Maisaa66/tree-component.git',
-                    ]],
-                )
-            }
+            checkout([$class: 'GitSCM',
+            branches: [[name: "main"]],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [ [
+                    $class: 'SubmoduleOption',
+                    disableSubmodules: false,
+                    parentCredentials: true,
+                    recursiveSubmodules: true,
+                    reference: '',
+                    trackingSubmodules: false
+                ],
+                [
+                    $class: 'GitLFSPull'
+                ]
+            ],
+            submoduleCfg: [],
+            userRemoteConfigs: [
+                [
+                    url: "https://github.com/Maisaa66/tree-component.git"
+                ]
+            ]
+        ])
         }
     
 }
