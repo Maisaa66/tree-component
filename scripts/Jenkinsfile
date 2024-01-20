@@ -75,7 +75,8 @@ node {
         def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
         echo "container id id is  ${contID}  "
         
-        bat "rm ./xuicommon_gv_docker.pid"
+        bat "del .\xuicommon_gv_docker.pid"
+
         // bat "docker rm ${contID}"
         // bat "rm ./xuicommon_gv_docker.pid"
         //             def contID = bat (script: "type .\\xuicommon_gv_docker.pid", returnStdout:true)
