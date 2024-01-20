@@ -23,15 +23,15 @@ node {
 
     
         stage('clean up') {
-        containerExistsResultCode = sh (
+        containerExistsResultCode = bat (
             script: "docker container inspect ${DOCKER_CONTAINER_NAME}",
             returnStatus: true
         )
         // 'docker container inspect' return 0 if a container was found
         if (0 == containerExistsResultCode) {
             catchError {
-                sh "docker stop ${DOCKER_CONTAINER_NAME}"
-                sh "docker rm ${DOCKER_CONTAINER_NAME}"
+                bat "docker stop ${DOCKER_CONTAINER_NAME}"
+                bat "docker rm ${DOCKER_CONTAINER_NAME}"
             }
         }
     }
