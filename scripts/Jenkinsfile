@@ -80,9 +80,12 @@ node {
             def containerId = bat(script: 'type .\\xuicommon_gv_docker.pid', returnStdout: true).trim()
             echo "containerID is ${containerId}"
         }
-        finally{
-            echo "FINALLY"
-        }
+            finally {
+                bat "docker stop ${containerId}"
+                bat "docker rm ${containerId}"
+                bat "rm ./xuicommon_gv_docker.pid"
+
+            }
     }
 }
 
