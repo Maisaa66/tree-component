@@ -42,21 +42,5 @@ node {
                 )
             }
         }
-
-    stage("Prepare Docker Image") {
-        imageExistsResultCode = sh (
-            script: "docker image inspect ${DOCKER_IMAGE_NAME}",
-            returnStatus: true
-        )
-        echo "Docker image inspect resultcode: ${imageExistsResultCode}"
-        echo "Rebuild flag state: ${env.REBUILD_NODE_DOCKER_IMAGE}"
-
-        // 'docker image inspect' returns 0 if an image was found
-        if (0 != imageExistsResultCode || "true" == env.REBUILD_NODE_DOCKER_IMAGE ) {
-            
-                bat "docker build --tag ${DOCKER_IMAGE_NAME} --file ./dockerfile_verification ."
-            
-        }
-    }
     
 }
