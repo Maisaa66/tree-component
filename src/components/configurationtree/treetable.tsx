@@ -21,10 +21,6 @@ import { ReactComponent as AddIcon } from "../../assets/icons/addactionicon.svg"
 import { ReactComponent as DuplicatIcon } from "../../assets/icons/duplicatactionicon.svg";
 import NumberInputAdornments from "./numberinput";
 
-// Invalid type assertion using 'as'
-const invalidTypeAssertion: string = "hello" as number;
-
-
 type ITableStylesProps = {
   cell?: CSSProperties;
   row?: CSSProperties;
