@@ -24,6 +24,5 @@ RUN npm install --legacy-peer-deps
 
 COPY src src
 
-RUN npm run build
 
 CMD ["tail", "-f", "/dev/null"]
