@@ -206,18 +206,17 @@ export default function NumberInputAdornments(props: numberInputProp) {
     loadedValue ? +loadedValue : +value || 0
   );
 
-  const defualtValue = useRef<number>(+value);
+      const defualtValue = useRef<number>(+value);
 
-  const [androment, setAndroment] = useState("(Preset)");
-  const [error, setError] = useState(false);
-  const [min, max] = range ? range.split(",") : [undefined, undefined];
-  const handleValueChange = (
+        const [androment, setAndroment] = useState("(Preset)");
+          const [error, setError] = useState(false);
+              const [min, max] = range ? range.split(",") : [undefined, undefined];
+      const handleValueChange = (
     /* tslint:disable-next-line:no-unused-variable */
     _event:
-      // | React.FocusEvent<HTMLInputElement>
-      // | React.PointerEvent
-      // | React.KeyboardEvent
-    MouseEventHandler,
+      | React.FocusEvent<HTMLInputElement>
+      | React.PointerEvent
+      | React.KeyboardEvent,
     val: number | undefined
   ) => {
     if (val !== undefined) {
