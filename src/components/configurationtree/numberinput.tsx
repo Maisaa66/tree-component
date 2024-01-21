@@ -214,9 +214,10 @@ export default function NumberInputAdornments(props: numberInputProp) {
   const handleValueChange = (
     /* tslint:disable-next-line:no-unused-variable */
     _event:
-      | React.FocusEvent<HTMLInputElement>
-      | React.PointerEvent
-      | React.KeyboardEvent,
+      // | React.FocusEvent<HTMLInputElement>
+      // | React.PointerEvent
+      // | React.KeyboardEvent
+    MouseEventHandler,
     val: number | undefined
   ) => {
     if (val !== undefined) {
