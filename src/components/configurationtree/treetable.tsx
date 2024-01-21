@@ -1,6 +1,5 @@
 
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Toggle from "./togglebutton";
 import LongText from "./textbox";
