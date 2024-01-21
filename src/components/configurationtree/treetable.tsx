@@ -98,6 +98,9 @@ const TreeTable = forwardRef((props: ITreeTableProps, ref) => {
     console.log(action, state);
   }
 
+  // for tetsing linting errors
+  const unusedVariable = "This variable is not used.";
+  
   const tree = useTree(
     data,
     {
