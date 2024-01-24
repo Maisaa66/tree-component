@@ -113,6 +113,7 @@
   "scripts": {
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
+    "test-ci": "jest --ci", 
     "build": "webpack",
     "check-types": "tsc --noemit"
   },
