@@ -4,6 +4,7 @@ DOCKER_IMAGE_NAME='xui_common_gv_image'
 DOCKER_CONTAINER_NAME='xui_common_gv'
 JUNIT_TEST_REPORT_FILE_NAME='junit_common_testreport.xml'
 
+unitTestExecutionResultCode = -1
 checkTypesExecutionResultCode = -1 
 packageSecurityAuditResultCode = -1
 packageSecurityAuditNotAllowedBits = 248 
@@ -92,7 +93,10 @@ stage("Run Tests") {
                 script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
                 returnStatus: true
             )
-
+            unitTestExecutionResultCode = sh (
+                script: "docker exec ${containerId} /bin/bash -c \"cd /xui/common && npm test\"",
+                returnStatus: true
+            )
             linterResultCode = bat (
                 script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run lint\"",
                 returnStatus: true
@@ -121,6 +125,10 @@ stage("Run Tests") {
         }
         if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
             echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
+            currentBuild.result = 'FAILURE'
+        }
+        if (0 != unitTestExecutionResultCode) {
+            echo "Unit test execution result code: ${unitTestExecutionResultCode}. Failing build."
             currentBuild.result = 'FAILURE'
         }
         if (0 != linterResultCode) {
