@@ -83,6 +83,9 @@ stage("Run Tests") {
             // this command will start the container with the id from the file
             bat "docker start ${contID}"
 
+            unitTestExecutionResultCode = bat(
+                script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm test\""
+            )
             // this command will execute the command in the container and return the result code 
             checkTypesExecutionResultCode = bat (
                 script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run check-types\"",
@@ -124,7 +127,10 @@ stage("Run Tests") {
             echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
             currentBuild.result = 'FAILURE'
         }
-
+        if (0 != unitTestExecutionResultCode) {
+            echo "Npm atest failed. Please check testing."
+            currentBuild.result = 'FAILURE'
+        }
         if (0 != linterResultCode) {
             echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
             currentBuild.result = 'UNSTABLE'
