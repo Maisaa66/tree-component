@@ -118,23 +118,23 @@ stage("Run Tests") {
 }
 
     
-    stage('Finalize') {
-        if (0 != checkTypesExecutionResultCode) {
-            echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
-            currentBuild.result = 'FAILURE'
-        }
-        if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
-            echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
-            currentBuild.result = 'FAILURE'
-        }
-        if (0 != unitTestExecutionResultCode) {
-            echo "Npm atest failed. Please check testing."
-            currentBuild.result = 'FAILURE'
-        }
-        if (0 != linterResultCode) {
-            echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
-            currentBuild.result = 'UNSTABLE'
-        }
+stage('Finalize') {
+    if (0 != checkTypesExecutionResultCode) {
+        echo "TypeScript type check result code: ${checkTypesExecutionResultCode}. Failing build."
+        currentBuild.result = 'FAILURE'
     }
+    if (0 != (packageSecurityAuditResultCode & packageSecurityAuditNotAllowedBits)) {
+        echo "Npm audit security check failed. Please check package vulnerabilities by running yarn audit or the log above."
+        currentBuild.result = 'FAILURE'
+    }
+    if (0 != unitTestExecutionResultCode) {
+        echo "Npm atest failed. Please check testing."
+        currentBuild.result = 'FAILURE'
+    }
+    if (0 != linterResultCode) {
+        echo "Linter indicated errors. Please check errors by running 'npm run lint' in development environment or check Jenkins logs."
+        currentBuild.result = 'UNSTABLE'
+    }
+}
 }
 
