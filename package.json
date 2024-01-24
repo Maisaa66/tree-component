@@ -60,6 +60,10 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-syntax-jsx": "^7.23.3",
+    "@babel/preset-env": "^7.23.8",
+    "babel-jest": "^29.7.0",
+    "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@testing-library/jest-dom": "^6.1.6",
     "@testing-library/react": "^14.1.2",
@@ -106,8 +110,13 @@
     },
     "testEnvironment": "jsdom",
     "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
-    }
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
   },
   "scripts": {
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
