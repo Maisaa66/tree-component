@@ -84,7 +84,7 @@ stage("Run Tests") {
             bat "docker start ${contID}"
 
             unitTestExecutionResultCode = bat(
-                script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm test-ci\""
+                script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm run test-ci\""
             )
             // this command will execute the command in the container and return the result code 
             checkTypesExecutionResultCode = bat (
