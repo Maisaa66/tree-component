@@ -19,6 +19,7 @@ COPY .eslintignore .eslintignore
 COPY .eslintrc.js .eslintrc.js
 COPY tsconfig.json tsconfig.json
 copy webpack.config.js webpack.config.js
+COPY babel.config.js babel.config.js 
 
 RUN npm install --legacy-peer-deps
 
