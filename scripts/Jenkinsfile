@@ -93,7 +93,7 @@ stage("Run Tests") {
                 script: "docker exec ${contID} /bin/bash -c \"cd /xui/common && npm audit --groups dependencies\"",
                 returnStatus: true
             )
-            unitTestExecutionResultCode = sh (
+            unitTestExecutionResultCode = bat (
                 script: "docker exec ${containerId} /bin/bash -c \"cd /xui/common && npm test\"",
                 returnStatus: true
             )
