@@ -217,9 +217,9 @@ export default function NumberInputAdornments(props: numberInputProp) {
       | React.FocusEvent<HTMLInputElement>
       | React.PointerEvent
       | React.KeyboardEvent,
-    val: number | undefined
+    val: number | null
   ) => {
-    if (val !== undefined) {
+    if (val !== null) {
       setFieldValue(val);
     }
   };
