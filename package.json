@@ -1,5 +1,5 @@
 {
-  "name": "@treecomponent",
+  "name": "@treecomponent/treecomponent",
   "version": "0.1.0",
   "description": "tree component",
   "main": "./dist/index.js",
