@@ -1,6 +1,6 @@
 {
   "name": "@treecomponent/treecomponent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "tree component",
   "main": "./dist/index.js",
   "directories": {
